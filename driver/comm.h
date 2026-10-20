@@ -1,0 +1,28 @@
+#pragma once
+#include <ntddk.h>
+
+#define IOCTL_LARP_READ  CTL_CODE(FILE_DEVICE_UNKNOWN, 0x801, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_LARP_WRITE CTL_CODE(FILE_DEVICE_UNKNOWN, 0x802, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_LARP_BASE  CTL_CODE(FILE_DEVICE_UNKNOWN, 0x803, METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define IOCTL_LARP_PID   CTL_CODE(FILE_DEVICE_UNKNOWN, 0x804, METHOD_BUFFERED, FILE_ANY_ACCESS)
+
+typedef struct _LARP_RW {
+    ULONG  Pid;
+    PVOID  Address;
+    PVOID  Buffer;
+    SIZE_T Size;
+} LARP_RW, *PLARP_RW;
+
+typedef struct _LARP_BASE {
+    ULONG   Pid;
+    WCHAR   ModuleName[64];
+    PVOID   OutBase;
+    SIZE_T  OutSize;
+} LARP_BASE, *PLARP_BASE;
+
+typedef struct _LARP_PID {
+    WCHAR  ProcessName[64];
+    ULONG  OutPid;
+} LARP_PID, *PLARP_PID;
+
+NTSTATUS LarpDeviceControl(PDEVICE_OBJECT DeviceObject, PIRP Irp);
