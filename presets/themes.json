@@ -1,0 +1,6 @@
+[
+  { "name": "noir",   "ambient": [0.05,0.05,0.08], "fogColor": [0.02,0.02,0.03], "fogStart": 0, "fogEnd": 180, "brightness": 0.7, "clockTime": 0.5 },
+  { "name": "golden", "ambient": [0.35,0.28,0.18], "fogColor": [0.9,0.7,0.4],   "fogStart": 0, "fogEnd": 900, "brightness": 2.5, "clockTime": 17.5 },
+  { "name": "neon",   "ambient": [0.15,0.05,0.35], "fogColor": [0.3,0.0,0.6],   "fogStart": 0, "fogEnd": 300, "brightness": 1.8, "clockTime": 22.0 },
+  { "name": "arctic", "ambient": [0.75,0.82,0.95], "fogColor": [0.85,0.9,1.0],  "fogStart": 0, "fogEnd": 500, "brightness": 3.0, "clockTime": 12.0 }
+]
