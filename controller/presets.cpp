@@ -10,9 +10,14 @@ bool Presets::load_items(const std::string& path) {
     json j; f >> j;
     for (auto& e : j) {
         ItemPreset p;
-        p.name     = e.value("name", "");
-        p.shirtUrl = e.value("shirtUrl", "");
-        p.pantsUrl = e.value("pantsUrl", "");
+        p.name        = e.value("name", "");
+        p.shirtUrl    = e.value("shirtUrl", "");
+        p.pantsUrl    = e.value("pantsUrl", "");
+        p.faceUrl     = e.value("faceUrl", "");
+        p.displayName = e.value("displayName", "");
+        if (e.contains("hatMeshes") && e["hatMeshes"].is_array()) {
+            for (auto& m : e["hatMeshes"]) p.hatMeshes.push_back(m.get<std::string>());
+        }
         m_items.push_back(p);
     }
     return true;
@@ -37,8 +42,13 @@ bool Presets::load_themes(const std::string& path) {
 }
 
 void Presets::apply_item(Roblox& r, const ItemPreset& p) {
-    if (!p.shirtUrl.empty()) r.set_shirt(p.shirtUrl);
-    if (!p.pantsUrl.empty()) r.set_pants(p.pantsUrl);
+    if (!p.shirtUrl.empty())    r.set_shirt(p.shirtUrl);
+    if (!p.pantsUrl.empty())    r.set_pants(p.pantsUrl);
+    if (!p.faceUrl.empty())     r.set_face(p.faceUrl);
+    if (!p.displayName.empty()) r.set_display_name(p.displayName);
+    for (size_t i = 0; i < p.hatMeshes.size(); ++i) {
+        if (!p.hatMeshes[i].empty()) r.set_hat((int)i, p.hatMeshes[i]);
+    }
 }
 
 void Presets::apply_theme(Roblox& r, const ThemePreset& t) {

@@ -177,3 +177,60 @@ bool Roblox::set_pants(const std::string& assetUrl) {
     if (!pants) return false;
     return write_rbx_string(pants + off::Clothing::Template, assetUrl);
 }
+
+bool Roblox::set_face(const std::string& textureUrl) {
+    auto ch = character(); if (!ch) return false;
+    auto head = find_child_by_class(ch, "Part"); // Head is a Part named "Head"
+    // Prefer the actual Head by name match
+    for (auto c : children_of(ch)) {
+        auto desc = drv.read<uintptr_t>(c + off::Instance::ClassDescriptor);
+        if (!desc || !*desc) continue;
+        // Read instance name via NameContainer -> NameInContainer -> string
+        auto nameContPtr = drv.read<uintptr_t>(c + off::Instance::NameContainer);
+        if (!nameContPtr || !*nameContPtr) continue;
+        auto nameStrPtr = drv.read<uintptr_t>(*nameContPtr + off::Instance::NameInContainer);
+        if (!nameStrPtr || !*nameStrPtr) continue;
+        char nbuf[32]{};
+        drv.raw_read(*nameStrPtr, nbuf, sizeof(nbuf) - 1);
+        if (std::string(nbuf) == "Head") { head = c; break; }
+    }
+    if (!head) return false;
+    auto decal = find_child_by_class(head, "Decal");
+    if (!decal) return false;
+    return write_rbx_string(decal + off::Textures::Texture, textureUrl);
+}
+
+int Roblox::count_accessories() {
+    auto ch = character(); if (!ch) return 0;
+    int n = 0;
+    for (auto c : children_of(ch)) {
+        if (class_name_of(c) == "Accessory") ++n;
+    }
+    return n;
+}
+
+bool Roblox::set_hat(int accessoryIndex, const std::string& meshUrl) {
+    auto ch = character(); if (!ch) return false;
+    int seen = 0;
+    uintptr_t accessory = 0;
+    for (auto c : children_of(ch)) {
+        if (class_name_of(c) != "Accessory") continue;
+        if (seen++ == accessoryIndex) { accessory = c; break; }
+    }
+    if (!accessory) return false;
+    auto handle = find_child_by_class(accessory, "Part");
+    if (!handle) return false;
+    auto mesh = find_child_by_class(handle, "SpecialMesh");
+    if (!mesh) return false;
+    return write_rbx_string(mesh + off::SpecialMesh::MeshId, meshUrl);
+}
+
+uintptr_t Roblox::humanoid() {
+    auto ch = character(); if (!ch) return 0;
+    return find_child_by_class(ch, "Humanoid");
+}
+
+bool Roblox::set_display_name(const std::string& name) {
+    auto h = humanoid(); if (!h) return false;
+    return write_rbx_string(h + off::Humanoid::DisplayName, name);
+}

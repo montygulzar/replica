@@ -54,6 +54,12 @@ public:
     // Items
     bool set_shirt(const std::string& assetUrl);
     bool set_pants(const std::string& assetUrl);
+    bool set_face(const std::string& textureUrl);
+    bool set_hat(int accessoryIndex, const std::string& meshUrl);
+    int  count_accessories();
+    bool set_display_name(const std::string& name);
+
+    uintptr_t humanoid();
 
 private:
     Driver& drv;

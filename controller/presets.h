@@ -7,6 +7,11 @@ struct ItemPreset {
     std::string name;
     std::string shirtUrl;
     std::string pantsUrl;
+    std::string faceUrl;
+    std::string displayName;
+    // Per-accessory-index hat/hair mesh overrides. Index 0 is the first
+    // accessory parented to Character, index 1 the second, etc.
+    std::vector<std::string> hatMeshes;
 };
 
 struct ThemePreset {

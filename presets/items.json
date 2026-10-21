@@ -1,5 +1,26 @@
 [
-  { "name": "shadow fit", "shirtUrl": "http://www.roblox.com/asset/?id=11111111", "pantsUrl": "http://www.roblox.com/asset/?id=22222222" },
-  { "name": "red carpet", "shirtUrl": "http://www.roblox.com/asset/?id=33333333", "pantsUrl": "http://www.roblox.com/asset/?id=44444444" },
-  { "name": "blank",      "shirtUrl": "", "pantsUrl": "" }
+  {
+    "name": "shadow fit",
+    "shirtUrl": "http://www.roblox.com/asset/?id=11111111",
+    "pantsUrl": "http://www.roblox.com/asset/?id=22222222",
+    "faceUrl":  "http://www.roblox.com/asset/?id=7074755",
+    "displayName": "shadow",
+    "hatMeshes": []
+  },
+  {
+    "name": "red carpet",
+    "shirtUrl": "http://www.roblox.com/asset/?id=33333333",
+    "pantsUrl": "http://www.roblox.com/asset/?id=44444444",
+    "faceUrl":  "http://www.roblox.com/asset/?id=20418400",
+    "displayName": "",
+    "hatMeshes": []
+  },
+  {
+    "name": "blank",
+    "shirtUrl": "",
+    "pantsUrl": "",
+    "faceUrl": "",
+    "displayName": "",
+    "hatMeshes": []
+  }
 ]

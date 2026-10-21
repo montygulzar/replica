@@ -77,9 +77,24 @@ namespace off {
     }
 
     namespace Humanoid {
-        constexpr uintptr_t WalkSpeed  = 0x1C0;
-        constexpr uintptr_t JumpPower  = 0x194;
-        constexpr uintptr_t JumpHeight = 0x190;
-        constexpr uintptr_t HipHeight  = 0x184;
+        constexpr uintptr_t WalkSpeed   = 0x1C0;
+        constexpr uintptr_t JumpPower   = 0x194;
+        constexpr uintptr_t JumpHeight  = 0x190;
+        constexpr uintptr_t HipHeight   = 0x184;
+        constexpr uintptr_t DisplayName = 0xA8;
+    }
+
+    // Accessory instance (child of Character). Contains a Handle BasePart,
+    // which contains a SpecialMesh whose MeshId is the hat/hair mesh.
+    namespace Accessory {
+        // walk Accessory children for "Handle" (BasePart), then its SpecialMesh
+    }
+
+    // BodyColors: six BrickColor fields (Head, Torso, LeftArm, RightArm,
+    // LeftLeg, RightLeg). Field offsets are not in the imtheo dump — leave
+    // skin color swapping disabled until these are added to the dump or
+    // sig-scanned at startup. Not shipping guessed values.
+    namespace BodyColors {
+        // TODO: populate from a fresh dump that includes BodyColors
     }
 }
