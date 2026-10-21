@@ -12,6 +12,7 @@ add_executable(LarpController WIN32
     controller/roblox.cpp
     controller/presets.cpp
     controller/ui.cpp
+    controller/watchdog.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
     ${IMGUI_DIR}/imgui_tables.cpp

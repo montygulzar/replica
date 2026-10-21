@@ -1,6 +1,7 @@
 #include "ui.h"
 #include "roblox.h"
 #include "presets.h"
+#include "watchdog.h"
 #include <imgui.h>
 #include <imgui_impl_win32.h>
 #include <imgui_impl_dx11.h>
@@ -65,7 +66,7 @@ static void toggle_input(bool interactive) {
     SetWindowLongW(g_hwnd, GWL_EXSTYLE, ex);
 }
 
-void run_ui(Driver& drv, Roblox& rbx, Presets& ps) {
+void run_ui(Driver& drv, Roblox& rbx, Presets& ps, Watchdog& wd) {
     HWND rblx = FindWindowW(nullptr, L"Roblox");
     RECT r{}; if (rblx) GetClientRect(rblx, &r);
     if (!make_overlay(r.right ? r.right : 1280, r.bottom ? r.bottom : 720)) return;
@@ -116,12 +117,20 @@ void run_ui(Driver& drv, Roblox& rbx, Presets& ps) {
                 if (ImGui::Selectable(ps.items()[i].name.c_str(), sel_item == i)) {
                     sel_item = i;
                     ps.apply_item(rbx, ps.items()[i]);
+                    wd.set_item(&ps.items()[i]);
+                }
+            }
+            if (sel_item >= 0) {
+                if (ImGui::SmallButton("Clear re-apply")) {
+                    sel_item = -1;
+                    wd.set_item(nullptr);
                 }
             }
         }
 
         ImGui::Separator();
         ImGui::TextDisabled("INSERT = toggle mouse");
+        ImGui::TextDisabled("Re-apply tick: on (survives respawn)");
         ImGui::End();
 
         ImGui::Render();

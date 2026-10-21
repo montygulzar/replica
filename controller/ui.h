@@ -2,4 +2,5 @@
 class Driver;
 class Roblox;
 class Presets;
-void run_ui(Driver& drv, Roblox& rbx, Presets& ps);
+class Watchdog;
+void run_ui(Driver& drv, Roblox& rbx, Presets& ps, Watchdog& wd);

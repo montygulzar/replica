@@ -1,6 +1,7 @@
 #include "roblox.h"
 #include "presets.h"
 #include "ui.h"
+#include "watchdog.h"
 #include <cstdio>
 
 int wmain() {
@@ -19,6 +20,11 @@ int wmain() {
     ps.load_themes("presets/themes.json");
     ps.load_items("presets/items.json");
 
-    run_ui(drv, rbx, ps);
+    Watchdog wd(rbx, ps);
+    wd.start();
+
+    run_ui(drv, rbx, ps, wd);
+
+    wd.stop();
     return 0;
 }
