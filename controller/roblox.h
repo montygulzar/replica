@@ -61,10 +61,28 @@ public:
 
     uintptr_t humanoid();
 
+    // CoreGui label larp: swap any TextLabel/TextButton text anywhere
+    // under CoreGui. Covers home menu robux, follower/friend counts, your
+    // username in the topbar, the in-game currency HUD, custom place UI.
+    uintptr_t coregui();
+    int       swap_labels_by_name(const std::string& nameSubstring,
+                                  const std::string& newText);
+    // Dump every TextLabel/TextButton reachable from CoreGui as
+    // "path\ttext" lines. Used by the UI's "scan" button so you can see
+    // the real label names on your current Roblox build without guessing.
+    std::vector<std::string> scan_labels();
+
+    // Instance name reader (used by label walkers and scanners).
+    std::string name_of(uintptr_t inst);
+
 private:
     Driver& drv;
     std::vector<uintptr_t> children_of(uintptr_t parent);
     std::string class_name_of(uintptr_t inst);
     uintptr_t   find_child_by_class(uintptr_t parent, const char* cls);
     bool        write_rbx_string(uintptr_t strField, const std::string& s);
+    void        walk_text_labels(uintptr_t root,
+                                 const std::string& path,
+                                 std::vector<std::pair<uintptr_t, std::string>>& out,
+                                 int depth);
 };

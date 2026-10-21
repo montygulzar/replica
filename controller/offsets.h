@@ -84,6 +84,13 @@ namespace off {
         constexpr uintptr_t DisplayName = 0xA8;
     }
 
+    // Rbx GuiObject.Text / TextLabel text storage. Used for in-game and
+    // home-menu label rewrites (robux counter, follower count, username,
+    // friend count, anywhere the client renders text through CoreGui).
+    namespace GuiObject {
+        constexpr uintptr_t Text = 0xDF0;
+    }
+
     // Accessory instance (child of Character). Contains a Handle BasePart,
     // which contains a SpecialMesh whose MeshId is the hat/hair mesh.
     namespace Accessory {

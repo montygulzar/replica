@@ -234,3 +234,79 @@ bool Roblox::set_display_name(const std::string& name) {
     auto h = humanoid(); if (!h) return false;
     return write_rbx_string(h + off::Humanoid::DisplayName, name);
 }
+
+std::string Roblox::name_of(uintptr_t inst) {
+    if (!inst) return {};
+    auto nameContPtr = drv.read<uintptr_t>(inst + off::Instance::NameContainer);
+    if (!nameContPtr || !*nameContPtr) return {};
+    auto nameStrPtr = drv.read<uintptr_t>(*nameContPtr + off::Instance::NameInContainer);
+    if (!nameStrPtr || !*nameStrPtr) return {};
+    char buf[128]{};
+    drv.raw_read(*nameStrPtr, buf, sizeof(buf) - 1);
+    return std::string(buf);
+}
+
+uintptr_t Roblox::coregui() {
+    return service("CoreGui");
+}
+
+void Roblox::walk_text_labels(uintptr_t root,
+                              const std::string& path,
+                              std::vector<std::pair<uintptr_t, std::string>>& out,
+                              int depth) {
+    if (!root || depth > 20) return;
+    auto kids = children_of(root);
+    for (auto c : kids) {
+        auto cls = class_name_of(c);
+        auto nm  = name_of(c);
+        std::string childPath = path.empty() ? nm : path + "." + nm;
+        if (cls == "TextLabel" || cls == "TextButton" || cls == "TextBox") {
+            out.emplace_back(c, childPath);
+        }
+        walk_text_labels(c, childPath, out, depth + 1);
+    }
+}
+
+int Roblox::swap_labels_by_name(const std::string& nameSubstring,
+                                const std::string& newText) {
+    auto cg = coregui(); if (!cg) return 0;
+    std::vector<std::pair<uintptr_t, std::string>> labels;
+    walk_text_labels(cg, "", labels, 0);
+    int hits = 0;
+    for (auto& [inst, pth] : labels) {
+        // Match on the final path component (the instance's own name) or
+        // its parent's name, since a lot of counters are named something
+        // generic ("Label") but live under a parent like "FollowersFrame".
+        if (pth.find(nameSubstring) != std::string::npos) {
+            if (write_rbx_string(inst + off::GuiObject::Text, newText)) ++hits;
+        }
+    }
+    return hits;
+}
+
+std::vector<std::string> Roblox::scan_labels() {
+    std::vector<std::string> out;
+    auto cg = coregui(); if (!cg) return out;
+    std::vector<std::pair<uintptr_t, std::string>> labels;
+    walk_text_labels(cg, "", labels, 0);
+    out.reserve(labels.size());
+    for (auto& [inst, pth] : labels) {
+        // Read the current text so you can tell which label is which
+        auto heapPtr = drv.read<uintptr_t>(inst + off::GuiObject::Text).value_or(0);
+        char cur[128]{};
+        if (heapPtr) drv.raw_read(heapPtr, cur, sizeof(cur) - 1);
+        // Short strings use SSO: the text sits inline at the field itself,
+        // so prefer that when the inline size field (field+0x10) is < 16.
+        auto sz = drv.read<uint64_t>(inst + off::GuiObject::Text + 0x10).value_or(0);
+        std::string current;
+        if (sz <= 15) {
+            char inlineBuf[16]{};
+            drv.raw_read(inst + off::GuiObject::Text, inlineBuf, 16);
+            current.assign(inlineBuf, (size_t)sz);
+        } else {
+            current.assign(cur, strnlen(cur, sizeof(cur) - 1));
+        }
+        out.push_back(pth + "\t" + current);
+    }
+    return out;
+}
