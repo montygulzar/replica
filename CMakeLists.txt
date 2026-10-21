@@ -28,3 +28,7 @@ target_include_directories(LarpController PRIVATE
 )
 
 target_link_libraries(LarpController PRIVATE d3d11 dwmapi)
+
+# Compatibility check utility - console exe users run before install.
+add_executable(LarpCompatCheck tools/compat_check.cpp)
+target_link_libraries(LarpCompatCheck PRIVATE advapi32)
